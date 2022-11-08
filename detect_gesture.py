@@ -163,11 +163,13 @@ def detect_hands_gesture():
                     cv2.imshow("blue tears picture", lighten)
                     light = True
                     rotate = True
-                # elif (hand_sign_id == 4 or hand_sign_id == 5) and (not light):
-                #     rotate = False
-                #     light = False
-                #     cv2.waitKey(1000)
-                #     cv2.imshow("blue tears picture", tears)
+                """
+                elif hand_sign_id == 4 or hand_sign_id == 5:
+                    rotate = False
+                    light = False
+                    cv2.waitKey(1000)
+                    cv2.imshow("blue tears picture", tears)
+                """
                 elif hand_sign_id == 1:
                     light = False
                     rotate = False
@@ -203,7 +205,7 @@ def detect_hands_gesture():
         else:
             point_history.append([0, 0])
 
-        # debug_image = draw_point_history(debug_image, point_history)
+        #debug_image = draw_point_history(debug_image, point_history)
         debug_image = draw_info(debug_image, fps, mode, number)
 
         face_width_in_frame = face_data(debug_image)
@@ -540,13 +542,14 @@ def draw_info_text(image, brect, handedness, hand_sign_text,
     cv2.putText(image, info_text, (brect[0] + 5, brect[1] - 4),
                cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 1, cv2.LINE_AA)
 
-    # if finger_gesture_text != "":
-    #     cv2.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
-    #                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4, cv2.LINE_AA)
-    #     cv2.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
-    #                cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2,
-    #                cv2.LINE_AA)
-
+    """
+    if finger_gesture_text != "":
+        cv2.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 4, cv2.LINE_AA)
+        cv2.putText(image, "Finger Gesture:" + finger_gesture_text, (10, 60),
+                   cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2,
+                   cv2.LINE_AA)
+    """
     return image
 
 def draw_point_history(image, point_history):
