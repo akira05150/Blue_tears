@@ -1,7 +1,7 @@
 # Blue_tears
 
-`main.py`: server
+`app.py`: server
 
-`app.py`: application
+`detect_gesture.py`: detect gesture and distance
 
 `distacne.py`: distance measurement
