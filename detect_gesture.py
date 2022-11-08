@@ -163,6 +163,10 @@ def detect_hands_gesture():
                     cv2.imshow("blue tears picture", lighten)
                     light = True
                     rotate = True
+                elif hand_sign_id == 1:
+                    light = False
+                    rotate = False
+                    cv2.imshow("blue tears picture", picture)
                 """
                 elif hand_sign_id == 4 or hand_sign_id == 5:
                     rotate = False
@@ -170,10 +174,6 @@ def detect_hands_gesture():
                     cv2.waitKey(1000)
                     cv2.imshow("blue tears picture", tears)
                 """
-                elif hand_sign_id == 1:
-                    light = False
-                    rotate = False
-                    cv2.imshow("blue tears picture", picture)
 
             if hand_sign_id == 2:  # Point gesture
                 point_history.append(landmark_list[8])
