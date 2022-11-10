@@ -6,7 +6,7 @@
 - To pray for the blue tears: upper heart or down heart
 
 > :warning: 
-> You need to **<font color=red>wait for a few seconds</font>**, then the blue tears appeared.
+> You need to **wait for a few seconds**, then the blue tears appeared.
 > While blue tears appeared, you **could not do anything** then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
 
 
