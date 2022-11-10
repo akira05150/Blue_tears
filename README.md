@@ -1,5 +1,20 @@
 # Blue_tears
 
+## Instructions
+- To turn on the light: open your palm
+- To turn off the light: close your palm
+- To pray for the blue tears: upper heart or down heart
+
+:::info
+- You need to wait for a few seconds, then the blue tears appeared.
+- While blue tears appeared, you could not do anything then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
+:::
+
+## Data Collection
+- The size of the videos are large so we didn't upload them here, all the video are on our google drive. Download the materials from [here](https://drive.google.com/drive/u/0/folders/12hI5uB_-W8tm1z1VPcJoLmeoTQmb6mGd) before you run the program.
+- Rename `藍眼淚呈現v2.mp4` as `blue_tears_v2.mp4` and `燈塔轉動.mp4` as `rotate.mp4`.
+
+---
 ## How to use?
 - Scripts: 
 	- `app.py`: server
@@ -10,6 +25,3 @@
 	python app.py
 	```
 
-## Data Collection
-- The size of the videos are large so we didn't upload them here, all the video are on our google drive. Download the materials from [here](https://drive.google.com/drive/u/0/folders/12hI5uB_-W8tm1z1VPcJoLmeoTQmb6mGd) before you run the program.
-- Rename `藍眼淚呈現v2.mp4` as `blue_tears_v2.mp4` and `燈塔轉動.mp4` as `rotate.mp4`.
