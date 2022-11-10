@@ -4,9 +4,10 @@
 - To turn on the light: open your palm
 - To turn off the light: close your palm
 - To pray for the blue tears: upper heart or down heart
-
+- To zoom in on the part of the blue tears: step closer to the picture (less than 50 cm)
+	
 	> :warning: 
-	> You need to **wait for a few seconds**, then the blue tears appeared.
+	> After praying for the blue tears, you need to **wait for a few seconds** then the blue tears would show up.
 	> While blue tears appeared, you **could not do anything** then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
 
 
