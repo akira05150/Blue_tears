@@ -96,24 +96,38 @@ def detect_hands_gesture():
     finger_gesture_history = deque(maxlen=history_length)
 
     # load img and video ############################################################
-    picture = cv2.imread("data/dark.jpg", cv2.IMREAD_COLOR)
-    picture = imutils.resize(picture, width=1024)
+    dark = cv2.imread("data/dark.jpg", cv2.IMREAD_COLOR)
+    dark = imutils.resize(dark, width=1024)
     lighten = cv2.imread("data/lighten.jpg", cv2.IMREAD_COLOR)
     lighten = imutils.resize(lighten, width=1024)
+
     light_rotate = cv2.VideoCapture("data/rotate.mp4")
-    len_video = int(light_rotate.get(cv2.CAP_PROP_FRAME_COUNT))
-    video_list = []
-    for i in range(len_video):
+    len_light_video = int(light_rotate.get(cv2.CAP_PROP_FRAME_COUNT))
+    light_video_list = []
+    for i in range(len_light_video):
         ret, frame = light_rotate.read()
+        if not ret:
+            print("error when loading lightening video")
         frame = imutils.resize(frame, width=1024)
-        video_list.append(frame)
-    tears = cv2.imread("data/blue_tears.jpg", cv2.IMREAD_COLOR)
-    tears = imutils.resize(tears, width=1024)
+        light_video_list.append(frame)
+    tears = cv2.VideoCapture("data/blue_tears.mp4")
+    len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
+    tears_video_list = []
+    for i in range(len_tear_video):
+        ret, frame = tears.read()
+        if not ret:
+            print("error when loading tears video")
+        frame = imutils.resize(frame, width=1024)
+        tears_video_list.append(frame)
     
-    cv2.imshow("blue tears picture", picture)
+    cv2.imshow("blue tears picture", dark)
     light = False
     rotate = False
+    restrict = False
     idx = 0
+    index = 0
+    cnt = 30
+    count_2min = 200
     
     # distance measurement #####################
     ref_image = cv2.imread("data/test.jpg")
@@ -173,21 +187,22 @@ def detect_hands_gesture():
                 else:
                     point_history.append([0, 0])
 
-                if hand_sign_id == 0 and (not light):
-                    cv2.imshow("blue tears picture", lighten)
+                if hand_sign_id == 0 and (not light) and (not restrict):
+                    # turn on the light
                     light = True
                     rotate = True
-                elif hand_sign_id == 1:
+                    cv2.imshow("blue tears picture", lighten)
+                elif hand_sign_id == 1 and (not restrict):
+                    # trun off the light
                     light = False
                     rotate = False
-                    cv2.imshow("blue tears picture", picture)
-                """
+                    cv2.imshow("blue tears picture", dark)
                 elif hand_sign_id == 4 or hand_sign_id == 5:
+                    # blue tears appear
                     rotate = False
                     light = False
-                    cv2.waitKey(1000)
-                    cv2.imshow("blue tears picture", tears)
-                """
+                    restrict = True
+                    cv2.imshow("blue tears picture", dark)
 
                 # Finger gesture classification
                 finger_gesture_id = 0
@@ -221,20 +236,45 @@ def detect_hands_gesture():
         if face_width_in_frame != 0:
             Distance = distance_finder(focal_length_found, FACE_WIDTH, face_width_in_frame)
             # Drwaing Text on the screen
-            cv2.putText(
-                debug_image, f"Distance = {round(Distance,2)} CM", (300, 30), fonts, 1, (BLACK), 2
-            )
+            cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
         # Screen reflection #############################################################
         cv.imshow('Hand Gesture Recognition', debug_image)
 
-        if light and rotate:
-            cv2.imshow('blue tears picture', video_list[idx])
+        # show video
+        if cnt > 0 and restrict:
+            cv2.putText(debug_image, f"Downcount: {cnt}", (600, 50), fonts, 1.5, (RED), 2, cv2.LINE_AA)
+            cnt -= 1
+            
+        if light and rotate and (not restrict):
+            # light rotating
+            cv2.imshow('blue tears picture', light_video_list[idx])
             cv2.waitKey(10)
-            if (idx < len_video-1):
+            if (idx < len_light_video-1):
                 idx += 1
             else:
                 idx = 0
+        if cnt == 0 and restrict:
+            cv2.putText(debug_image, f"Disapper: : {count_2min}", (700, 60), fonts, 0.5, (GREEN), 2, cv2.LINE_AA)
+            count_2min -= 1
+            if count_2min == 0:
+                cnt = 30
+                restrict = False
+                light = False
+                count_2min = 200
+                cv2.imshow("blue tears picture", dark)
+            else:
+                cv2.imshow('blue tears picture', tears_video_list[index])
+                cv2.waitKey(10)
+                if (index < len_tear_video-1):
+                    index += 1
+                else:
+                    index = 0
 
+                if Distance < 40:
+                    # zoom in
+                elif Distance > 60:
+                    # zoom out
+    
     cap.release()
     cv.destroyAllWindows()
 

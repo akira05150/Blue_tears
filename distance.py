@@ -8,7 +8,7 @@ GREEN = (0, 255, 0)
 RED = (0, 0, 255)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-fonts = cv2.FONT_HERSHEY_COMPLEX
+fonts = cv2.FONT_HERSHEY_SIMPLEX
 
 """
 # Define the codec and create VideoWriter object
