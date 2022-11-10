@@ -12,7 +12,7 @@
 
 ## Data Collection
 - The size of the videos are large so we didn't upload them here, all the video are on our google drive. Download the materials from [here](https://drive.google.com/drive/u/0/folders/12hI5uB_-W8tm1z1VPcJoLmeoTQmb6mGd) before you run the program.
-- Rename `藍眼淚呈現v2.mp4` as `blue_tears_v2.mp4` and `燈塔轉動.mp4` as `rotate.mp4`.
+- Put them under the directory `./data/`, then rename `藍眼淚呈現v2.mp4` as `blue_tears_v2.mp4` and `燈塔轉動.mp4` as `rotate.mp4`.
 
 
 ## How to use?
@@ -25,3 +25,7 @@
 	python app.py
 	```
 
+## Reference
+1. Mediapipe
+2. Opencv
+3. Kazuhito Takahashi, 2020 "hand-gesture-recognition-mediapipe". [Source code](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
