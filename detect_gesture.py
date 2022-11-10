@@ -97,9 +97,9 @@ def detect_hands_gesture():
 
     # load img and video ############################################################
     dark = cv2.imread("data/dark.jpg", cv2.IMREAD_COLOR)
-    dark = imutils.resize(dark, width=1024)
+    #dark = imutils.resize(dark, width=1024)
     lighten = cv2.imread("data/lighten.jpg", cv2.IMREAD_COLOR)
-    lighten = imutils.resize(lighten, width=1024)
+    #lighten = imutils.resize(lighten, width=1024)
 
     light_rotate = cv2.VideoCapture("data/rotate.mp4")
     len_light_video = int(light_rotate.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -108,18 +108,20 @@ def detect_hands_gesture():
         ret, frame = light_rotate.read()
         if not ret:
             print("error when loading lightening video")
-        frame = imutils.resize(frame, width=1024)
+        #frame = imutils.resize(frame, width=1024)
         light_video_list.append(frame)
-    tears = cv2.VideoCapture("data/blue_tears.mp4")
+    tears = cv2.VideoCapture("data/blue_tears_v2.mp4")
     len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
     tears_video_list = []
     for i in range(len_tear_video):
         ret, frame = tears.read()
         if not ret:
             print("error when loading tears video")
-        frame = imutils.resize(frame, width=1024)
+        #frame = imutils.resize(frame, width=1024)
         tears_video_list.append(frame)
     
+    cv2.namedWindow('blue tears picture', cv2.WINDOW_NORMAL)
+    cv2.resizeWindow('blue tears picture', 1024, 813)
     cv2.imshow("blue tears picture", dark)
     light = False
     rotate = False
@@ -263,20 +265,45 @@ def detect_hands_gesture():
                 count_2min = 200
                 cv2.imshow("blue tears picture", dark)
             else:
-                cv2.imshow('blue tears picture', tears_video_list[index])
-                cv2.waitKey(10)
-                if (index < len_tear_video-1):
-                    index += 1
-                else:
-                    index = 0
-
-                if Distance < 40:
-                    # zoom in
-                elif Distance > 60:
-                    # zoom out
+                if Distance < 50:   # zoom in
+                    pts1, pts2 = zoomin(1777, 891)
+                    M = cv2.getPerspectiveTransform(pts1, pts2)
+                    dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
+                    cv2.imshow('blue tears picture', dst)
+                    if (index < len_tear_video-1):
+                        index += 1
+                    else:
+                        index = 0
+                elif Distance >= 50:    # zoom out
+                    cv2.imshow('blue tears picture', tears_video_list[index])
+                    cv2.waitKey(10)
+                    if (index < len_tear_video-1):
+                        index += 1
+                    else:
+                        index = 0
     
     cap.release()
     cv.destroyAllWindows()
+
+
+def zoomin(x, y):
+    x1 = x - 860
+    if x1 < 0:
+        x1 = 0
+    x2 = x + 860
+    if x2 > 3402:
+        x2 = 3402
+    y1 = y - 796
+    if y1 < 0:
+        y1 = 0
+    y2 = y + 796
+    if y2 > 2702:
+        y2 = 2702
+
+    #2702, 3402
+    pts1 = np.float32([[x1, y1], [x2, y1], [x1, y2], [x2, y2]])
+    pts2 = np.float32([[0, 0], [1024, 0], [0, 813], [1024, 813]])
+    return pts1, pts2
 
 
 def select_mode(key, mode):
