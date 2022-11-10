@@ -5,12 +5,11 @@
 - To turn off the light: close your palm
 - To pray for the blue tears: upper heart or down heart
 
-:::info
+> :warning: 
+>
+> You need to wait for a few seconds, then the blue tears appeared.
+> While blue tears appeared, you could not do anything then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
 
-- You need to wait for a few seconds, then the blue tears appeared.
-- While blue tears appeared, you could not do anything then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
-
-:::
 
 ## Data Collection
 - The size of the videos are large so we didn't upload them here, all the video are on our google drive. Download the materials from [here](https://drive.google.com/drive/u/0/folders/12hI5uB_-W8tm1z1VPcJoLmeoTQmb6mGd) before you run the program.
