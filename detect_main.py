@@ -60,7 +60,7 @@ def detect_main():
     finger_gesture_history = deque(maxlen=history_length)
 
     # load img and video ############################################################
-    dark = cv2.imread("data/dark.jpg", cv2.IMREAD_COLOR)
+    dark = cv2.imread("data/dark_v2.jpg", cv2.IMREAD_COLOR)
     lighten = cv2.imread("data/lighten.jpg", cv2.IMREAD_COLOR)
 
     light_rotate = cv2.VideoCapture("data/rotate.mp4")
