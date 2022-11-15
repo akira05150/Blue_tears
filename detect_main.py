@@ -91,7 +91,7 @@ def detect_main():
     cnt = 30
     count_2min = 200
     Distance = 200
-    show_mode = 0   # dark image
+    crop_i, crop_j = 3402, 2702
     
     # distance measurement #####################
     ref_image = cv2.imread("data/test.jpg")
@@ -155,20 +155,20 @@ def detect_main():
                     # turn on the light
                     light = True
                     rotate = True
-                    show_mode = 1
+                    #show_mode = 1
                     cv2.imshow("blue tears picture", lighten)
                 elif hand_sign_id == 1 and (not restrict):
                     # trun off the light
                     light = False
                     rotate = False
-                    show_mode = 0
+                    #show_mode = 0
                     cv2.imshow("blue tears picture", dark)
                 elif hand_sign_id == 4 or hand_sign_id == 5:
                     # blue tears appear
                     rotate = False
                     light = False
                     restrict = True
-                    show_mode = 0
+                    #show_mode = 0
                     cv2.imshow("blue tears picture", dark)
 
                 # Finger gesture classification
@@ -231,27 +231,36 @@ def detect_main():
                 cv2.imshow("blue tears picture", dark)
             else:
                 if Distance < 50:   # zoom in
-                    i, j = 3402, 2702
-                    while i >= 860 and j >= 796:
-                        #print(i)
-                        pts1, pts2 = zoomin(1777, 891, i, j)
-                        M = cv2.getPerspectiveTransform(pts1, pts2)
-                        dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
-                        cv2.imshow('blue tears picture', dst)
-                        if (index < len_tear_video-1):
-                            index += 1
-                        else:
-                            index = 0
-                        i -= 20
-                        j -= 20
+                    pts1, pts2 = zoomin(1777, 891, crop_i, crop_j)
+                    M = cv2.getPerspectiveTransform(pts1, pts2)
+                    dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
+                    cv2.imshow('blue tears picture', dst)
+                    cv2.waitKey(10)
+                    if (index < len_tear_video-1):
+                        index += 1
+                    else:
+                        index = 0
+                    # 972=3402-243*10; 772=2702-193*10 (3402:2702=243:193)
+                    if crop_i > 972 and crop_j > 772:
+                        crop_i -= 243
+                        crop_j -= 193
                 elif Distance >= 50:    # zoom out
-                    cv2.imshow('blue tears picture', tears_video_list[index])
+                    pts1, pts2 = zoomin(1777, 891, crop_i, crop_j)
+                    M = cv2.getPerspectiveTransform(pts1, pts2)
+                    dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
+                    #cv2.imshow('blue tears picture', tears_video_list[index])
+                    cv2.imshow('blue tears picture', dst)
                     cv2.waitKey(10)
                     if (index < len_tear_video-1):
                         index += 1
                     else:
                         index = 0
 
-    
+                    if crop_i < 3402 and crop_j < 2702:
+                        crop_i += 243
+                        crop_j += 193
+                    else:
+                        crop_i, crop_j = 3402, 2702
+
     cap.release()
     cv.destroyAllWindows()
