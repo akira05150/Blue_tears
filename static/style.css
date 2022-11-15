@@ -1,0 +1,101 @@
+body {
+    background-color: #081E57;
+}
+/* 背景 */
+.back {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    overflow: hidden;
+}
+.back::before {
+    content: '';
+    opacity: 0.5;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    overflow: hidden;
+    background-image: url("../static/images/background.png");
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/* 圖畫 */
+.frame {
+    width: 55.2vw;
+    height: 87vh;
+    object-fit: contain;
+    position: absolute;
+    top: 6.4vh;
+    left: 4.6vw;
+}
+
+.tears {
+    width: 52vw;
+    height: 73.4vh;
+    object-fit: contain;
+    position: absolute;
+    top: 13vh;
+    left: 7.3vw;
+}
+
+/* 文字說明 */
+.right_container {
+    width: 29vw;
+    height: 80vh;
+    /* border: solid 4px #333; 查看邊界 */ 
+    position: absolute;
+    top: 10vh;
+    left: 66.15vw;
+}
+
+.description {
+    width: 29vw;
+    font-family: Microsoft JhengHei,sans-serif;
+    font-size: 2.6vh; 
+    /* 28px */
+    line-height: 4vh;
+    color: white;
+}
+
+/* 提示框 */
+.hint {
+    border: 2px solid #FCC419;
+    /* height: 56px; */
+    /* padding: 0.01vh; */
+    border-radius: 20px;
+    position: relative;
+    top: 4.63vh;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    /* animate */
+    visibility: hidden;
+    /* animation: fadeInRight;
+    animation-delay: 1s;
+    animation-duration: 2s; */
+}
+
+.hint_bulb {
+    /* width: 50px; */
+    height: 4.6vh;
+    object-fit: contain;
+    position: relative;
+    left: 1.05vw;
+
+}
+
+.hint_text {
+    font-family: Microsoft JhengHei,sans-serif;
+    font-size: 2.22vh; 
+    /* 24px */
+    color: white;
+    position: relative;
+    left: 2.2vw;
+}
