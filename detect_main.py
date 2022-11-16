@@ -230,7 +230,7 @@ def detect_main():
                 count_2min = 200
                 cv2.imshow("blue tears picture", dark)
             else:
-                if Distance < 50:   # zoom in
+                if Distance < 50:   # zoom in (1122, 891)
                     pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                     M = cv2.getPerspectiveTransform(pts1, pts2)
                     dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
@@ -248,7 +248,6 @@ def detect_main():
                     pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                     M = cv2.getPerspectiveTransform(pts1, pts2)
                     dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
-                    #cv2.imshow('blue tears picture', tears_video_list[index])
                     cv2.imshow('blue tears picture', dst)
                     cv2.waitKey(10)
                     if (index < len_tear_video-1):

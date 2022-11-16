@@ -1,5 +1,5 @@
-from detect_main import *
-# import cv2
+from detection import *
+#from detect_main import *
 import os
 from flask import Flask, render_template, Response
 
@@ -9,14 +9,14 @@ app = Flask(__name__)
 def home():
     return render_template("index.html")
 
-def detect(detect_main):
+def detect():
     while True:
-        frame = detect_main.detect_main()
+        frame = detection.get_frame()
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-@app.route("/detect")
-def main():
+@app.route("/video_feed")
+def video_feed():
     return Response(detect(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 """
@@ -26,6 +26,6 @@ def main():
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)
     main()
     
