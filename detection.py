@@ -36,12 +36,7 @@ crop_i, crop_j = 3402, 2702
 # init: dark
 display = dark
 
-# 0: dark, 1: lighten, 2: lighten rotate, 3: blue_tear
-def get_frame():
-    detect_main()
-    frame = display
-    ret, jpeg = cv2.imencode('.jpg', frame)
-    return jpeg.tobytes()
+
 
 # Argument parsing #################################################################
 args = get_args()
@@ -75,6 +70,12 @@ ref_image_face_width = face_data(ref_image)
 focal_length_found = focal_length(KNOWN_DISTANCE, FACE_WIDTH, ref_image_face_width)
 #print(focal_length_found)
 
+# 0: dark, 1: lighten, 2: lighten rotate, 3: blue_tear
+def get_frame():
+    detect_main()
+    frame = display
+    ret, jpeg = cv2.imencode('.jpg', frame)
+    return jpeg.tobytes()
 
 def detect_main():
     # Model load #############################################################
