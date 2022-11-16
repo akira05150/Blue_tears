@@ -155,20 +155,20 @@ def detect_main():
                     # turn on the light
                     light = True
                     rotate = True
-                    #show_mode = 1
+                    
                     cv2.imshow("blue tears picture", lighten)
                 elif hand_sign_id == 1 and (not restrict):
                     # trun off the light
                     light = False
                     rotate = False
-                    #show_mode = 0
+                    
                     cv2.imshow("blue tears picture", dark)
                 elif hand_sign_id == 4 or hand_sign_id == 5:
                     # blue tears appear
                     rotate = False
                     light = False
                     restrict = True
-                    #show_mode = 0
+                    
                     cv2.imshow("blue tears picture", dark)
 
                 # Finger gesture classification
@@ -231,7 +231,7 @@ def detect_main():
                 cv2.imshow("blue tears picture", dark)
             else:
                 if Distance < 50:   # zoom in
-                    pts1, pts2 = zoomin(1777, 891, crop_i, crop_j)
+                    pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                     M = cv2.getPerspectiveTransform(pts1, pts2)
                     dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
                     cv2.imshow('blue tears picture', dst)
@@ -245,7 +245,7 @@ def detect_main():
                         crop_i -= 243
                         crop_j -= 193
                 elif Distance >= 50:    # zoom out
-                    pts1, pts2 = zoomin(1777, 891, crop_i, crop_j)
+                    pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                     M = cv2.getPerspectiveTransform(pts1, pts2)
                     dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
                     #cv2.imshow('blue tears picture', tears_video_list[index])
@@ -259,8 +259,6 @@ def detect_main():
                     if crop_i < 3402 and crop_j < 2702:
                         crop_i += 243
                         crop_j += 193
-                    else:
-                        crop_i, crop_j = 3402, 2702
 
     cap.release()
     cv.destroyAllWindows()
