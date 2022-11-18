@@ -1,5 +1,4 @@
 from detection import *
-#from detect_main import *
 import os
 from flask import Flask, render_template, Response
 
@@ -11,7 +10,7 @@ def home():
 
 def detect():
     while True:
-        frame = detection.get_frame()
+        frame = get_frame()
         yield (b'--frame\r\n'
                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -19,13 +18,7 @@ def detect():
 def video_feed():
     return Response(detect(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-"""
-def main():
-    detect_main() 
-"""
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
-    #main()
-    

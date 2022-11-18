@@ -15,15 +15,9 @@ for i in range(len_light_video):
     if not ret:
         print("error when loading lightening video")
     light_video_list.append(frame)
-tears = cv2.VideoCapture("data/blue_tears_v2.mp4")
-len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
-tears_video_list = []
-for i in range(len_tear_video):
-    ret, frame = tears.read()
-    if not ret:
-        print("error when loading tears video")
-    tears_video_list.append(frame)
 
+# init: dark
+display = dark
 light = False
 rotate = False
 restrict = False
@@ -33,9 +27,6 @@ cnt = 30
 count_2min = 200
 Distance = 200
 crop_i, crop_j = 3402, 2702
-# init: dark
-display = dark
-
 
 
 # Argument parsing #################################################################
@@ -68,16 +59,18 @@ finger_gesture_history = deque(maxlen=history_length)
 ref_image = cv2.imread("data/test.jpg")
 ref_image_face_width = face_data(ref_image)
 focal_length_found = focal_length(KNOWN_DISTANCE, FACE_WIDTH, ref_image_face_width)
-#print(focal_length_found)
 
 # 0: dark, 1: lighten, 2: lighten rotate, 3: blue_tear
 def get_frame():
+    global display
     detect_main()
-    frame = display
-    ret, jpeg = cv2.imencode('.jpg', frame)
+    ret, jpeg = cv2.imencode('.jpg', display)
     return jpeg.tobytes()
 
 def detect_main():
+    global display
+    global light, rotate, restrict, idx, index, cnt, count_2min, Distance
+    global crop_i, crop_j
     # Model load #############################################################
     mp_hands = mp.solutions.hands
     hands = mp_hands.Hands(
@@ -106,10 +99,8 @@ def detect_main():
         ]
 
     # FPS Measurement ########################################################
-    cvFpsCalc = CvFpsCalc(buffer_len=10)
-    
-
-    fps = cvFpsCalc.get()
+    #cvFpsCalc = CvFpsCalc(buffer_len=10)
+    #fps = cvFpsCalc.get()
 
     mode = 0
     key = cv2.waitKey(10)
@@ -155,20 +146,17 @@ def detect_main():
                 light = True
                 rotate = True
                 display = lighten
-                #cv2.imshow("blue tears picture", lighten)
             elif hand_sign_id == 1 and (not restrict):
                 # trun off the light
                 light = False
                 rotate = False
                 display = dark
-                #cv2.imshow("blue tears picture", dark)
             elif hand_sign_id == 4 or hand_sign_id == 5:
                 # blue tears appear
                 rotate = False
                 light = False
                 restrict = True
                 display = dark
-                #cv2.imshow("blue tears picture", dark)
 
             # Finger gesture classification
             finger_gesture_id = 0
@@ -196,7 +184,7 @@ def detect_main():
         point_history.append([0, 0])
 
     #debug_image = draw_point_history(debug_image, point_history)
-    debug_image = draw_info(debug_image, fps, mode, number)
+    #debug_image = draw_info(debug_image, fps, mode, number)
 
     face_width_in_frame = face_data(debug_image)
     if face_width_in_frame != 0:
@@ -214,14 +202,13 @@ def detect_main():
     if light and rotate and (not restrict):
         # light rotating
         display = light_video_list[idx]
-        #cv2.imshow('blue tears picture', light_video_list[idx])
         cv2.waitKey(10)
         if (idx < len_light_video-1):
             idx += 1
         else:
             idx = 0
     if cnt == 0 and restrict:
-        #cv2.putText(debug_image, f"Disapper: : {count_2min}", (300, 70), fonts, 0.5, (GREEN), 2, cv2.LINE_AA)
+        # waiting for blue tears appeared
         count_2min -= 1
         if count_2min == 0:
             cnt = 30
@@ -229,14 +216,24 @@ def detect_main():
             light = False
             count_2min = 200
             display = dark
-            #cv2.imshow("blue tears picture", dark)
+            print("dark again")
         else:
+            print("blue tear appear")
+            tears = cv2.VideoCapture("data/blue_tears_v2.mp4")
+            len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
+            tears_video_list = []
+            for i in range(len_tear_video):
+                ret, frame = tears.read()
+                if not ret:
+                    print("error when loading tears video")
+                tears_video_list.append(frame)
+            print(len_tear_video)
+
             if Distance < 50:   # zoom in (1122, 891)
                 pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                 M = cv2.getPerspectiveTransform(pts1, pts2)
                 dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
                 display = dst
-                #cv2.imshow('blue tears picture', dst)
                 cv2.waitKey(10)
                 if (index < len_tear_video-1):
                     index += 1
@@ -251,7 +248,6 @@ def detect_main():
                 M = cv2.getPerspectiveTransform(pts1, pts2)
                 dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
                 display = dst
-                #cv2.imshow('blue tears picture', dst)
                 cv2.waitKey(10)
                 if (index < len_tear_video-1):
                     index += 1
