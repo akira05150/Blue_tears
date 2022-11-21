@@ -16,6 +16,15 @@ for i in range(len_light_video):
         print("error when loading lightening video")
     light_video_list.append(frame)
 
+tears = cv2.VideoCapture("data/blue_tears_v3.mp4")
+len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
+tears_video_list = []
+for i in range(len_tear_video):
+    ret, frame = tears.read()
+    if not ret:
+        print("error when loading tears video")
+    tears_video_list.append(frame)
+
 # init: dark
 display = dark
 light = False
@@ -60,7 +69,6 @@ ref_image = cv2.imread("data/test.jpg")
 ref_image_face_width = face_data(ref_image)
 focal_length_found = focal_length(KNOWN_DISTANCE, FACE_WIDTH, ref_image_face_width)
 
-# 0: dark, 1: lighten, 2: lighten rotate, 3: blue_tear
 def get_frame():
     global display
     detect_main()
@@ -216,19 +224,7 @@ def detect_main():
             light = False
             count_2min = 200
             display = dark
-            print("dark again")
         else:
-            print("blue tear appear")
-            tears = cv2.VideoCapture("data/blue_tears_v2.mp4")
-            len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
-            tears_video_list = []
-            for i in range(len_tear_video):
-                ret, frame = tears.read()
-                if not ret:
-                    print("error when loading tears video")
-                tears_video_list.append(frame)
-            print(len_tear_video)
-
             if Distance < 50:   # zoom in (1122, 891)
                 pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                 M = cv2.getPerspectiveTransform(pts1, pts2)
