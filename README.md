@@ -26,6 +26,7 @@
 	```bash
 	python app.py
 	```
+	And then paste `127.0.0.1:6200` to the browser.
 
 ## Reference
 1. Mediapipe
