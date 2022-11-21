@@ -28,12 +28,12 @@ body {
 
 /* 圖畫 */
 .frame {
-    width: 55.2vw;
-    height: 87vh;
+    width: 60.725vw;
+    height: 85.18vh;
     object-fit: contain;
     position: absolute;
-    top: 6.4vh;
-    left: 4.6vw;
+    top: 7.4vh;
+    left: 2.86vw;
 }
 
 .tears {
@@ -41,8 +41,8 @@ body {
     height: 73.4vh;
     object-fit: contain;
     position: absolute;
-    top: 13vh;
-    left: 7.3vw;
+    top: 13.3vh;
+    left: 7.03vw;
 }
 
 /* 文字說明 */
@@ -70,8 +70,8 @@ body {
     /* height: 56px; */
     /* padding: 0.01vh; */
     border-radius: 20px;
-    position: relative;
-    top: 4.63vh;
+    /* position: relative; */
+    margin-top: 5vh;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -98,4 +98,30 @@ body {
     color: white;
     position: relative;
     left: 2.2vw;
+}
+
+/* icons互動 */
+.reaction {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 5vh;
+}
+
+.icons {
+    width: 6vh;
+    object-fit: contain;
+    margin-left: 3.5vw;
+}
+
+.icons_text {
+    font-family: Microsoft JhengHei,sans-serif;
+    font-size: 2.6vh; 
+    /* 28px */
+    line-height: 4vh;
+    color: white;
+    display: inline-block;
+
+    position: relative;
+    left: 0.5vw;
 }
