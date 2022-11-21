@@ -15,6 +15,7 @@ for i in range(len_light_video):
     if not ret:
         print("error when loading lightening video")
     light_video_list.append(frame)
+light_rotate.release()
 
 tears = cv2.VideoCapture("data/blue_tears_v3.mp4")
 len_tear_video = int(tears.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -24,6 +25,8 @@ for i in range(len_tear_video):
     if not ret:
         print("error when loading tears video")
     tears_video_list.append(frame)
+tears.release()
+del frame
 
 # init: dark
 display = dark
@@ -36,7 +39,6 @@ cnt = 30
 count_2min = 200
 Distance = 200
 crop_i, crop_j = 3402, 2702
-
 
 # Argument parsing #################################################################
 args = get_args()
@@ -56,6 +58,32 @@ cap = cv2.VideoCapture(cap_device)
 cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
 cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
+# Model load #############################################################
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(
+    static_image_mode=use_static_image_mode,
+    max_num_hands=2,
+    min_detection_confidence=min_detection_confidence,
+    min_tracking_confidence=min_tracking_confidence,
+)
+
+keypoint_classifier = KeyPointClassifier()
+point_history_classifier = PointHistoryClassifier()
+
+# Read labels ###########################################################
+with open('model/keypoint_classifier/keypoint_classifier_label.csv',
+          encoding='utf-8-sig') as f:
+    keypoint_classifier_labels = csv.reader(f)
+    keypoint_classifier_labels = [
+        row[0] for row in keypoint_classifier_labels
+    ]
+with open(
+        'model/point_history_classifier/point_history_classifier_label.csv',
+        encoding='utf-8-sig') as f:
+    point_history_classifier_labels = csv.reader(f)
+    point_history_classifier_labels = [
+        row[0] for row in point_history_classifier_labels
+    ]
 
 # Coordinate history #################################################################
 history_length = 16
@@ -67,6 +95,7 @@ finger_gesture_history = deque(maxlen=history_length)
 # distance measurement #####################
 ref_image = cv2.imread("data/test.jpg")
 ref_image_face_width = face_data(ref_image)
+del ref_image
 focal_length_found = focal_length(KNOWN_DISTANCE, FACE_WIDTH, ref_image_face_width)
 
 def get_frame():
@@ -79,37 +108,7 @@ def detect_main():
     global display
     global light, rotate, restrict, idx, index, cnt, count_2min, Distance
     global crop_i, crop_j
-    # Model load #############################################################
-    mp_hands = mp.solutions.hands
-    hands = mp_hands.Hands(
-        static_image_mode=use_static_image_mode,
-        max_num_hands=2,
-        min_detection_confidence=min_detection_confidence,
-        min_tracking_confidence=min_tracking_confidence,
-    )
-
-    keypoint_classifier = KeyPointClassifier()
-    point_history_classifier = PointHistoryClassifier()
-
-    # Read labels ###########################################################
-    with open('model/keypoint_classifier/keypoint_classifier_label.csv',
-              encoding='utf-8-sig') as f:
-        keypoint_classifier_labels = csv.reader(f)
-        keypoint_classifier_labels = [
-            row[0] for row in keypoint_classifier_labels
-        ]
-    with open(
-            'model/point_history_classifier/point_history_classifier_label.csv',
-            encoding='utf-8-sig') as f:
-        point_history_classifier_labels = csv.reader(f)
-        point_history_classifier_labels = [
-            row[0] for row in point_history_classifier_labels
-        ]
-
-    # FPS Measurement ########################################################
-    #cvFpsCalc = CvFpsCalc(buffer_len=10)
-    #fps = cvFpsCalc.get()
-
+    
     mode = 0
     key = cv2.waitKey(10)
     number, mode = select_mode(key, mode)
@@ -144,11 +143,12 @@ def detect_main():
 
             # Hand sign classification
             hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
+            """
             if hand_sign_id == 2:  # Point gesture
                 point_history.append(landmark_list[8])
             else:
                 point_history.append([0, 0])
-
+            """
             if hand_sign_id == 0 and (not light) and (not restrict):
                 # turn on the light
                 light = True
@@ -199,14 +199,10 @@ def detect_main():
         Distance = distance_finder(focal_length_found, FACE_WIDTH, face_width_in_frame)
         # Drwaing Text on the screen
         cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
-    # Screen reflection #############################################################
-    cv2.imshow('Hand Gesture Recognition', debug_image)
+    
+    #cv2.imshow('Hand Gesture Recognition', debug_image)
 
-    # show video/img
-    if cnt > 0 and restrict:
-        #cv2.putText(debug_image, f"Downcount: {cnt}", (300, 50), fonts, 1.5, (RED), 2, cv2.LINE_AA)
-        cnt -= 1
-        
+    # show rotate.mp4
     if light and rotate and (not restrict):
         # light rotating
         display = light_video_list[idx]
@@ -215,6 +211,13 @@ def detect_main():
             idx += 1
         else:
             idx = 0
+    
+    # down count for display the video
+    if cnt > 0 and restrict:
+        #cv2.putText(debug_image, f"Downcount: {cnt}", (300, 50), fonts, 1.5, (RED), 2, cv2.LINE_AA)
+        cnt -= 1
+
+    # show blue tear video
     if cnt == 0 and restrict:
         # waiting for blue tears appeared
         count_2min -= 1
