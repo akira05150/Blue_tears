@@ -200,7 +200,7 @@ def detect_main():
         # Drwaing Text on the screen
         cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
     
-    #cv2.imshow('Hand Gesture Recognition', debug_image)
+    cv2.imshow('Hand Gesture Recognition', debug_image)
 
     # show rotate.mp4
     if light and rotate and (not restrict):
