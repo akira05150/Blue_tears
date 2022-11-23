@@ -255,7 +255,7 @@ def detect_main():
                 M = cv2.getPerspectiveTransform(pts1, pts2)
                 dst = cv2.warpPerspective(tears_video_list[tear_idx], M, (1024, 813))
                 display = dst
-                cv2.waitKey(1)
+                cv2.waitKey(10)
                 if (tear_idx < len_tear_video-1):
                     tear_idx += 1
                 else:
@@ -269,7 +269,7 @@ def detect_main():
                 M = cv2.getPerspectiveTransform(pts1, pts2)
                 dst = cv2.warpPerspective(tears_video_list[tear_idx], M, (1024, 813))
                 display = dst
-                cv2.waitKey(1)
+                cv2.waitKey(10)
                 if (tear_idx < len_tear_video-1):
                     tear_idx += 1
                 else:
