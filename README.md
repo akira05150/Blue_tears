@@ -13,7 +13,7 @@
 
 ## Data Collection
 - The size of the videos are large so we didn't upload them here, all the video are on our google drive. Download the materials from [here](https://drive.google.com/drive/u/0/folders/12hI5uB_-W8tm1z1VPcJoLmeoTQmb6mGd) before you run the program.
-- Put them under the directory `./data/`, then rename `藍眼淚呈現v3.mp4` as `blue_tears_v3.mp4` and `燈塔轉動.mp4` as `rotate.mp4`.
+- Put them under the directory `./data/`, then rename `藍眼淚呈現v3.mp4` as `blue_tears_v3.mp4`, `燈塔轉動.mp4` as `rotate.mp4` and `陽光下的淚Sun.mp4` as `sun.mp4`.
 
 
 ## How to use?

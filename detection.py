@@ -7,6 +7,16 @@ from  detect_gesture import *
 dark = cv2.imread("data/dark_v2.jpg", cv2.IMREAD_COLOR)
 lighten = cv2.imread("data/lighten.jpg", cv2.IMREAD_COLOR)
 
+sun = cv2.VideoCapture("data/sun.mp4")
+len_sun_video = int(sun.get(cv2.CAP_PROP_FRAME_COUNT))
+sun_list = []
+for i in range(len_sun_video):
+    ret, frame = sun.read()
+    if not ret:
+        print("error when loading sun video")
+    sun_list.append(frame)
+sun.release()
+
 light_rotate = cv2.VideoCapture("data/rotate.mp4")
 len_light_video = int(light_rotate.get(cv2.CAP_PROP_FRAME_COUNT))
 light_video_list = []
@@ -33,8 +43,10 @@ display = dark
 light = False
 rotate = False
 restrict = False
-idx = 0
-index = 0
+sunset = True
+sun_idx = 0
+light_idx = 0
+tear_idx = 0
 cnt = 30
 count_2min = 200
 Distance = 200
@@ -106,11 +118,11 @@ def get_frame():
 
 def detect_main():
     global display
-    global light, rotate, restrict, idx, index, cnt, count_2min, Distance
-    global crop_i, crop_j
+    global light, rotate, restrict, sunset
+    global sun_idx, light_idx, tear_idx, cnt, count_2min, Distance, crop_i, crop_j
     
     mode = 0
-    key = cv2.waitKey(10)
+    key = cv2.waitKey(1)
     number, mode = select_mode(key, mode)
 
     # Camera capture #####################################################
@@ -161,6 +173,10 @@ def detect_main():
                 display = dark
             elif hand_sign_id == 4 or hand_sign_id == 5:
                 # blue tears appear
+                # down count for display the video
+                if cnt > 0 and restrict:
+                    #cv2.putText(debug_image, f"Downcount: {cnt}", (300, 50), fonts, 1.5, (RED), 2, cv2.LINE_AA)
+                    cnt -= 1
                 rotate = False
                 light = False
                 restrict = True
@@ -202,23 +218,29 @@ def detect_main():
     
     cv2.imshow('Hand Gesture Recognition', debug_image)
 
-    # show rotate.mp4
-    if light and rotate and (not restrict):
-        # light rotating
-        display = light_video_list[idx]
-        cv2.waitKey(10)
-        if (idx < len_light_video-1):
-            idx += 1
+    # show sunset video
+    if sunset:
+        display = sun_list[sun_idx]
+        #cv2.waitKey(1)
+        if sun_idx < len_sun_video - 1:
+            sun_idx += 1
         else:
-            idx = 0
-    
-    # down count for display the video
-    if cnt > 0 and restrict:
-        #cv2.putText(debug_image, f"Downcount: {cnt}", (300, 50), fonts, 1.5, (RED), 2, cv2.LINE_AA)
-        cnt -= 1
+            sun_idx = 0
+            sunset = False
+            display = dark
+
+    # show rotate.mp4
+    if light and rotate and (not restrict) and (not sunset):
+        # light rotating
+        display = light_video_list[light_idx]
+        cv2.waitKey(1)
+        if (light_idx < len_light_video-1):
+            light_idx += 1
+        else:
+            light_idx = 0
 
     # show blue tear video
-    if cnt == 0 and restrict:
+    if cnt == 0 and restrict and (not sunset):
         # waiting for blue tears appeared
         count_2min -= 1
         if count_2min == 0:
@@ -231,13 +253,13 @@ def detect_main():
             if Distance < 50:   # zoom in (1122, 891)
                 pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                 M = cv2.getPerspectiveTransform(pts1, pts2)
-                dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
+                dst = cv2.warpPerspective(tears_video_list[tear_idx], M, (1024, 813))
                 display = dst
-                cv2.waitKey(10)
-                if (index < len_tear_video-1):
-                    index += 1
+                cv2.waitKey(1)
+                if (tear_idx < len_tear_video-1):
+                    tear_idx += 1
                 else:
-                    index = 0
+                    tear_idx = 0
                 # 972=3402-243*10; 772=2702-193*10 (3402:2702=243:193)
                 if crop_i > 972 and crop_j > 772:
                     crop_i -= 243
@@ -245,13 +267,13 @@ def detect_main():
             elif Distance >= 50:    # zoom out
                 pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                 M = cv2.getPerspectiveTransform(pts1, pts2)
-                dst = cv2.warpPerspective(tears_video_list[index], M, (1024, 813))
+                dst = cv2.warpPerspective(tears_video_list[tear_idx], M, (1024, 813))
                 display = dst
-                cv2.waitKey(10)
-                if (index < len_tear_video-1):
-                    index += 1
+                cv2.waitKey(1)
+                if (tear_idx < len_tear_video-1):
+                    tear_idx += 1
                 else:
-                    index = 0
+                    tear_idx = 0
 
                 if crop_i < 3402 and crop_j < 2702:
                     crop_i += 243
