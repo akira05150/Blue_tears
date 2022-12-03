@@ -10,6 +10,8 @@
 	> After praying for the blue tears, you need to **wait for a few seconds** then the blue tears would show up.
 	> While blue tears appeared, you **could not do anything** then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
 
+> **NOTICE!** : If you could not install `dlib` by `pip` successfully, try `conda install dlib` under your environment.
+
 
 ## Data Collection
 - The size of the videos are large so we didn't upload them here, all the video are on our google drive. Download the materials from [here](https://drive.google.com/drive/u/0/folders/12hI5uB_-W8tm1z1VPcJoLmeoTQmb6mGd) before you run the program.

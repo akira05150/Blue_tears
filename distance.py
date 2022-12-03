@@ -1,6 +1,6 @@
 import cv2
-import mediapipe as mp
-import math
+#import mediapipe as mp
+import dlib
 
 # distance from camera to object(face) measured
 KNOWN_DISTANCE = 60  # centimeter
@@ -12,8 +12,10 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 fonts = cv2.FONT_HERSHEY_SIMPLEX
 
-mp_face_detection = mp.solutions.face_detection
-mp_drawing = mp.solutions.drawing_utils
+#mp_face_detection = mp.solutions.face_detection
+#mp_drawing = mp.solutions.drawing_utils
+
+detector = dlib.get_frontal_face_detector()
 
 # focal length finder function
 def focal_length(measured_distance, real_width, width_in_rf_image):
@@ -28,6 +30,7 @@ def distance_finder(focal_length, real_face_width, face_width_in_frame):
 # face detector function
 def face_data(img):
     face_width = 0
+    """
     size = img.shape
     w = size[1]
     h = size[0]
@@ -44,4 +47,15 @@ def face_data(img):
                 ax, ay = int(a.x * w), int(a.y * h)
                 bx, by = int(b.x * w), int(b.y * h)
                 face_width = math.sqrt((ax - bx)**2 + (ay - by)**2)
+    """
+    face_rects, scores, idx = detector.run(img, 0)
+    for i, d in enumerate(face_rects):
+        x1 = d.left()
+        y1 = d.top()
+        x2 = d.right()
+        y2 = d.bottom()
+        
+        cv2.rectangle(img, (x1, y1), (x2, y2), (255,255, 255), 4,cv2.LINE_AA)
+        face_width = abs(x1 - x2)
+        
     return face_width

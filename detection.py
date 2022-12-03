@@ -38,7 +38,7 @@ for i in range(len_tear_video):
 tears.release()
 del frame
 
-# init: dark
+# init params ############################################
 display = dark
 light = False
 rotate = False
@@ -97,14 +97,12 @@ with open(
         row[0] for row in point_history_classifier_labels
     ]
 
-# Coordinate history #################################################################
+# Finger gesture history ################################################
 history_length = 16
 point_history = deque(maxlen=history_length)
-
-# Finger gesture history ################################################
 finger_gesture_history = deque(maxlen=history_length)
 
-# distance measurement #####################
+# distance measurement #################################################
 ref_image = cv2.imread("data/test.jpg")
 ref_image_face_width = face_data(ref_image)
 del ref_image
@@ -125,7 +123,7 @@ def detect_main():
     key = cv2.waitKey(1)
     number, mode = select_mode(key, mode)
 
-    # Camera capture #####################################################
+    """ Camera capture """
     ret, image = cap.read()
     if not ret:
         print("cannot open the camera")
@@ -155,27 +153,21 @@ def detect_main():
 
             # Hand sign classification
             hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
-            """
-            if hand_sign_id == 2:  # Point gesture
-                point_history.append(landmark_list[8])
-            else:
-                point_history.append([0, 0])
-            """
+
             if hand_sign_id == 0 and (not light) and (not restrict):
-                # turn on the light
+                """ turn on the light """
                 light = True
                 rotate = True
                 display = lighten
             elif hand_sign_id == 1 and (not restrict):
-                # trun off the light
+                """ trun off the light """
                 light = False
                 rotate = False
                 display = dark
             elif hand_sign_id == 4 or hand_sign_id == 5:
-                # blue tears appear
+                """ blue tears appear """
                 # down count for display the video
                 if cnt > 0 and restrict:
-                    #cv2.putText(debug_image, f"Downcount: {cnt}", (300, 50), fonts, 1.5, (RED), 2, cv2.LINE_AA)
                     cnt -= 1
                 rotate = False
                 light = False
@@ -207,18 +199,14 @@ def detect_main():
     else:
         point_history.append([0, 0])
 
-    #debug_image = draw_point_history(debug_image, point_history)
-    #debug_image = draw_info(debug_image, fps, mode, number)
-
     face_width_in_frame = face_data(debug_image)
     if face_width_in_frame != 0:
         Distance = distance_finder(focal_length_found, FACE_WIDTH, face_width_in_frame)
-        # Drwaing Text on the screen
         cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
     
     cv2.imshow('Hand Gesture Recognition', debug_image)
 
-    # show sunset video
+    """ show sunset video """
     if sunset:
         display = sun_list[sun_idx]
         #cv2.waitKey(1)
@@ -229,7 +217,7 @@ def detect_main():
             sunset = False
             display = dark
 
-    # show rotate.mp4
+    """ show rotate.mp4 video """
     if light and rotate and (not restrict) and (not sunset):
         # light rotating
         display = light_video_list[light_idx]
@@ -239,7 +227,7 @@ def detect_main():
         else:
             light_idx = 0
 
-    # show blue tear video
+    """ show blue tear video """
     if cnt == 0 and restrict and (not sunset):
         # waiting for blue tears appeared
         count_2min -= 1
