@@ -3,7 +3,7 @@ import mediapipe as mp
 from distance import *
 from  detect_gesture import *
 
-# load img and video ############################################################
+# load img and video ####################################################
 dark = cv2.imread("data/dark_v2.jpg", cv2.IMREAD_COLOR)
 lighten = cv2.imread("data/lighten.jpg", cv2.IMREAD_COLOR)
 
@@ -38,13 +38,14 @@ for i in range(len_tear_video):
 tears.release()
 del frame
 
-# init params ############################################
+# init params ############################################################
 display = dark
 light = False
 rotate = False
 restrict = False
 sunset = True
-sun_idx = 0
+#sun_angle = 0
+sun_video_slide = round(len_sun_video/(180/5))
 light_idx = 0
 tear_idx = 0
 cnt = 30
@@ -52,7 +53,7 @@ count_2min = 200
 Distance = 200
 crop_i, crop_j = 3402, 2702
 
-# Argument parsing #################################################################
+# Argument parsing #######################################################
 args = get_args()
 
 cap_device = args.device
@@ -108,16 +109,16 @@ ref_image_face_width = face_data(ref_image)
 del ref_image
 focal_length_found = focal_length(KNOWN_DISTANCE, FACE_WIDTH, ref_image_face_width)
 
-def get_frame():
+def get_frame(sun_angle):
     global display
-    detect_main()
+    detect_main(sun_angle)
     ret, jpeg = cv2.imencode('.jpg', display)
     return jpeg.tobytes()
 
-def detect_main():
+def detect_main(sun_angle):
     global display
     global light, rotate, restrict, sunset
-    global sun_idx, light_idx, tear_idx, cnt, count_2min, Distance, crop_i, crop_j
+    global sun_video_slide, light_idx, tear_idx, cnt, count_2min, Distance, crop_i, crop_j
     
     mode = 0
     key = cv2.waitKey(1)
@@ -130,7 +131,7 @@ def detect_main():
     image = cv2.flip(image, 1)  # Mirror display
     debug_image = copy.deepcopy(image)
 
-    # Detection implementation #############################################################
+    # Detection implementation ############################################
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
     image.flags.writeable = False
@@ -204,21 +205,23 @@ def detect_main():
         Distance = distance_finder(focal_length_found, FACE_WIDTH, face_width_in_frame)
         cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
     
-    cv2.imshow('Hand Gesture Recognition', debug_image)
+    #cv2.imshow('Hand Gesture Recognition', debug_image)
 
-    """ show sunset video """
+    """ show sunset video, controled by HW """
     if sunset:
+        sun_idx = int(sun_angle/5) * sun_video_slide
         display = sun_list[sun_idx]
         #cv2.waitKey(1)
-        if sun_idx < len_sun_video - 1:
-            sun_idx += 1
-        else:
-            sun_idx = 0
+        if sun_idx == int(180/5) * sun_video_slide:
             sunset = False
+            sun_idx = 0
             display = dark
+    if sun_angle == 0 and (not sunset):
+        # cannot reverse the sunset
+        sunset = True
 
     """ show rotate.mp4 video """
-    if light and rotate and (not restrict) and (not sunset):
+    if light and rotate and (not restrict) and (not sunset and sun_angle == 180):
         # light rotating
         display = light_video_list[light_idx]
         cv2.waitKey(1)
@@ -228,7 +231,7 @@ def detect_main():
             light_idx = 0
 
     """ show blue tear video """
-    if cnt == 0 and restrict and (not sunset):
+    if cnt == 0 and restrict and (not sunset and sun_angle == 180):
         # waiting for blue tears appeared
         count_2min -= 1
         if count_2min == 0:
