@@ -46,6 +46,7 @@ restrict = False
 sunset = True
 #sun_angle = 0
 sun_video_slide = round(len_sun_video/(180/5))
+sun_lock = False
 light_idx = 0
 tear_idx = 0
 cnt = 30
@@ -155,17 +156,17 @@ def detect_main(sun_angle):
             # Hand sign classification
             hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
 
-            if hand_sign_id == 0 and (not light) and (not restrict):
+            if hand_sign_id == 0 and (not light) and (not restrict) and (not sunset):
                 """ turn on the light """
                 light = True
                 rotate = True
                 display = lighten
-            elif hand_sign_id == 1 and (not restrict):
+            elif hand_sign_id == 1 and (not restrict) and (not sunset):
                 """ trun off the light """
                 light = False
                 rotate = False
                 display = dark
-            elif hand_sign_id == 4 or hand_sign_id == 5:
+            elif hand_sign_id == 4 or hand_sign_id == 5 and (not sunset):
                 """ blue tears appear """
                 # down count for display the video
                 if cnt > 0 and restrict:
@@ -216,12 +217,12 @@ def detect_main(sun_angle):
             sunset = False
             sun_idx = 0
             display = dark
-    if sun_angle == 0 and (not sunset):
-        # cannot reverse the sunset
+    
+    if sun_angle == 0 and (not sunset) and (not restrict) and (not rotate):
         sunset = True
 
     """ show rotate.mp4 video """
-    if light and rotate and (not restrict) and (not sunset and sun_angle == 180):
+    if light and rotate and (not restrict) and (not sunset) and sun_angle == 180:
         # light rotating
         display = light_video_list[light_idx]
         cv2.waitKey(1)
@@ -231,7 +232,7 @@ def detect_main(sun_angle):
             light_idx = 0
 
     """ show blue tear video """
-    if cnt == 0 and restrict and (not sunset and sun_angle == 180):
+    if cnt == 0 and restrict and (not sunset) and sun_angle == 180:
         # waiting for blue tears appeared
         count_2min -= 1
         if count_2min == 0:
