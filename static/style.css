@@ -47,31 +47,41 @@ body {
 
 /* 文字說明 */
 .right_container {
-    width: 29vw;
-    height: 80vh;
-    /* border: solid 4px #333; 查看邊界 */ 
+    width: 30.7vw;
+    height: 90vh;
+    /* border: solid 4px #333; */
     position: absolute;
-    top: 10vh;
+    top: 3.24vh;
     left: 66.15vw;
 }
 
-.description {
+#description {
     width: 29vw;
     font-family: Microsoft JhengHei,sans-serif;
     font-size: 2.6vh; 
     /* 28px */
     line-height: 4vh;
     color: white;
+    margin-top: 7.87vh;
+    visibility: hidden;
+}
+
+/* 手勢gif */
+#gesture {
+    height: 16.6vh;
+    object-fit: contain;
+    margin-top: 7.4vh;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    visibility: hidden;    
 }
 
 /* 提示框 */
 .hint {
     border: 2px solid #FCC419;
-    /* height: 56px; */
-    /* padding: 0.01vh; */
     border-radius: 20px;
-    /* position: relative; */
-    margin-top: 5vh;
+    margin-top: 7.4vh;
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -81,9 +91,7 @@ body {
     animation-delay: 1s;
     animation-duration: 2s; */
 }
-
-.hint_bulb {
-    /* width: 50px; */
+#hint_bulb {
     height: 4.6vh;
     object-fit: contain;
     position: relative;
@@ -91,7 +99,7 @@ body {
 
 }
 
-.hint_text {
+#hint_text {
     font-family: Microsoft JhengHei,sans-serif;
     font-size: 2.22vh; 
     /* 24px */
@@ -103,13 +111,19 @@ body {
 /* icons互動 */
 .reaction {
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
-    margin-top: 5vh;
+    
 }
 
-.icons {
+#icon_anemoscope {
     width: 6vh;
+    object-fit: contain;
+    margin-left: 3.5vw;
+}
+
+#icon_compass {
+    width: 9.2vh;
     object-fit: contain;
     margin-left: 3.5vw;
 }
@@ -123,5 +137,5 @@ body {
     display: inline-block;
 
     position: relative;
-    left: 0.5vw;
+    left: 1vw;
 }

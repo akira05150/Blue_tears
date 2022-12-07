@@ -9,6 +9,7 @@ def home():
 
 sun_angle = 0
 blue_tear_end = False
+condition = "sunrise"
 
 def detect():
     global sun_angle, condition, blue_tear_end
@@ -17,6 +18,11 @@ def detect():
         print(condition)
         yield (b'--frame\r\n'
         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+@app.get("/update")
+def update():
+    global condition
+    return condition
 
 @app.route('/post_json', methods=['POST'])
 def process_json():
