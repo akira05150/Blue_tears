@@ -15,7 +15,7 @@ def detect():
     while True:
         frame, condition, blue_tear_end = get_frame(sun_angle)
         print(condition)
-
+        print(blue_tear_end)
         yield (b'--frame\r\n'
         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -34,7 +34,7 @@ def process_json():
 @app.route('/get_end', methods=['GET'])
 def clock_return():
     global blue_tear_end
-    return blue_tear_end
+    return str(blue_tear_end)
 
 @app.route("/video_feed", methods=['GET'])
 def video_feed():

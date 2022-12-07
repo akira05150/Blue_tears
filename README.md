@@ -20,14 +20,18 @@
 
 
 ## Instructions
-- To turn on the light: open your palm
-- To turn off the light: close your palm
-- To pray for the blue tears: upper heart or down heart
-- To zoom in on the part of the blue tears: step closer to the picture (less than 50 cm)
+1. To manipulate the sun: turn the knob to the 180 degrees
+2. To turn on the light: open your palm
+3. To turn off the light: close your palm
+4. To pray for the blue tears: upper heart or down heart
+5. To zoom in on the part of the blue tears: step closer to the picture (less than 50 cm)
 	
 	> :warning: 
 	> After praying for the blue tears, you need to **wait for a few seconds** then the blue tears would show up.
 	> While blue tears appeared, you **could not do anything** then. It will disappear after around 30 seconds. After then, you could manipulate everything again.
+
+6. To play again, you have to wait for the sun to reverse back to 0 degrees. (You could not do anything until the sun back to the starting point.)
+7. After then, you could back to step 1.
 
 
 ## Data Collection
