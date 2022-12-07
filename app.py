@@ -8,7 +8,7 @@ def home():
     return render_template("index.html")
 
 sun_angle = 0
-blue_tear_end = 0
+blue_tear_end = False
 
 def detect():
     global sun_angle, condition, blue_tear_end
