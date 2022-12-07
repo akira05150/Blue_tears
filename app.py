@@ -8,11 +8,14 @@ def home():
     return render_template("index.html")
 
 sun_angle = 0
+blue_tear_end = 0
 
 def detect():
-    global sun_angle
+    global sun_angle, condition, blue_tear_end
     while True:
-        frame = get_frame(sun_angle)
+        frame, condition, blue_tear_end = get_frame(sun_angle)
+        print(condition)
+
         yield (b'--frame\r\n'
         b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
@@ -27,6 +30,11 @@ def process_json():
         return make_response(jsonify(fleid= "ok"), 200)
     else:
         return 'Content-Type not supported!'
+
+@app.route('/get_end', methods=['GET'])
+def clock_return():
+    global blue_tear_end
+    return blue_tear_end
 
 @app.route("/video_feed", methods=['GET'])
 def video_feed():

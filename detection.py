@@ -39,35 +39,33 @@ tears.release()
 del frame
 
 # init params ############################################################
-display = dark
-light = False
-rotate = False
-restrict = False
-sunset = True
-#sun_angle = 0
+display = dark  # which to display
+Case = "sunset"     # condition
+
+restrict = True    # restrict screen and cannot do hand recognition
+end = False     # is blue tear end or not?
+
 sun_video_slide = round(len_sun_video/(180/5))
-sun_lock = False
-light_idx = 0
-tear_idx = 0
-cnt = 30
-count_2min = 200
-Distance = 200
-crop_i, crop_j = 3402, 2702
+light_idx = 0       # index for lighthouse video
+tear_idx = 0        # index for blue tear video
+cnt = 30    # waiting for the blue tear appearing
+count_2min = 200    # the time blue tear disappeared
+crop_i, crop_j = 3402, 2702     # used for zoom in/out
+Distance = 200      # the distance ppl from the cam
 
 # Argument parsing #######################################################
 args = get_args()
 
+use_static_image_mode = args.use_static_image_mode
+min_detection_confidence = args.min_detection_confidence
+min_tracking_confidence = args.min_tracking_confidence
+#use_brect = True
+
+# camera preparation #####################################################
 cap_device = args.device
 cap_width = args.width
 cap_height = args.height
 
-use_static_image_mode = args.use_static_image_mode
-min_detection_confidence = args.min_detection_confidence
-min_tracking_confidence = args.min_tracking_confidence
-
-use_brect = True
-
-# camera preparation
 cap = cv2.VideoCapture(cap_device)
 cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
 cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
@@ -105,20 +103,20 @@ point_history = deque(maxlen=history_length)
 finger_gesture_history = deque(maxlen=history_length)
 
 # distance measurement #################################################
-ref_image = cv2.imread("data/test.jpg")
+ref_image = cv2.imread("data/test.jpg")     # used to measure focal len
 ref_image_face_width = face_data(ref_image)
 del ref_image
 focal_length_found = focal_length(KNOWN_DISTANCE, FACE_WIDTH, ref_image_face_width)
 
 def get_frame(sun_angle):
-    global display
+    global display, Case, end
     detect_main(sun_angle)
     ret, jpeg = cv2.imencode('.jpg', display)
-    return jpeg.tobytes()
+    return jpeg.tobytes(), Case, end
 
 def detect_main(sun_angle):
     global display
-    global light, rotate, restrict, sunset
+    global Case, restrict, end
     global sun_video_slide, light_idx, tear_idx, cnt, count_2min, Distance, crop_i, crop_j
     
     mode = 0
@@ -156,38 +154,33 @@ def detect_main(sun_angle):
             # Hand sign classification
             hand_sign_id = keypoint_classifier(pre_processed_landmark_list)
 
-            if hand_sign_id == 0 and (not light) and (not restrict) and (not sunset):
+            if hand_sign_id == 0 and (not restrict):
                 """ turn on the light """
-                light = True
-                rotate = True
-                display = lighten
-            elif hand_sign_id == 1 and (not restrict) and (not sunset):
+                Case = "lighthouse"
+                
+            elif hand_sign_id == 1 and (not restrict):
                 """ trun off the light """
-                light = False
-                rotate = False
-                display = dark
-            elif hand_sign_id == 4 or hand_sign_id == 5 and (not sunset):
+                Case = "dark"
+
+            elif hand_sign_id == 4 or hand_sign_id == 5 and (not restrict):
                 """ blue tears appear """
                 # down count for display the video
-                if cnt > 0 and restrict:
+                if cnt > 0:
                     cnt -= 1
-                rotate = False
-                light = False
-                restrict = True
-                display = dark
+                elif cnt == 0:
+                    Case = "pray"
+                    restrict = True
 
             # Finger gesture classification
             finger_gesture_id = 0
             point_history_len = len(pre_processed_point_history_list)
             if point_history_len == (history_length * 2):
-                finger_gesture_id = point_history_classifier(
-                    pre_processed_point_history_list)
+                finger_gesture_id = point_history_classifier(pre_processed_point_history_list)
 
             # Calculates the gesture IDs in the latest detection
             finger_gesture_history.append(finger_gesture_id)
-            most_common_fg_id = Counter(
-                finger_gesture_history).most_common()
-
+            most_common_fg_id = Counter(finger_gesture_history).most_common()
+            """
             # Drawing part
             debug_image = draw_bounding_rect(use_brect, debug_image, brect)
             debug_image = draw_landmarks(debug_image, landmark_list)
@@ -198,50 +191,46 @@ def detect_main(sun_angle):
                 keypoint_classifier_labels[hand_sign_id],
                 point_history_classifier_labels[most_common_fg_id[0][0]],
             )
+            """
     else:
         point_history.append([0, 0])
 
     face_width_in_frame = face_data(debug_image)
     if face_width_in_frame != 0:
         Distance = distance_finder(focal_length_found, FACE_WIDTH, face_width_in_frame)
-        cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
-    
+        #cv2.putText(debug_image, f"Distance = {round(Distance, 2)} CM", (300, 30), fonts, 0.6, (BLACK), 2, cv2.LINE_AA)
     #cv2.imshow('Hand Gesture Recognition', debug_image)
 
-    """ show sunset video, controled by HW """
-    if sunset:
+    """ display on the screen """
+    if Case == "sunset":
+        restrict = True
         sun_idx = int(sun_angle/5) * sun_video_slide
         display = sun_list[sun_idx]
-        #cv2.waitKey(1)
         if sun_idx == int(180/5) * sun_video_slide:
-            sunset = False
+            Case = "dark"
             sun_idx = 0
-            display = dark
-    
-    if sun_angle == 0 and (not sunset) and (not restrict) and (not rotate):
-        sunset = True
-
-    """ show rotate.mp4 video """
-    if light and rotate and (not restrict) and (not sunset) and sun_angle == 180:
-        # light rotating
+            #display = dark
+            restrict = False
+    elif Case == "wind":
+        pass
+    elif Case == "dark":
+        display = dark
+    elif Case == "lighthouse":
         display = light_video_list[light_idx]
         cv2.waitKey(1)
         if (light_idx < len_light_video-1):
             light_idx += 1
         else:
             light_idx = 0
-
-    """ show blue tear video """
-    if cnt == 0 and restrict and (not sunset) and sun_angle == 180:
-        # waiting for blue tears appeared
+    elif Case == "pray":
         count_2min -= 1
-        if count_2min == 0:
+        if count_2min == 0:     # time out
+            #restrict = False
             cnt = 30
-            restrict = False
-            light = False
             count_2min = 200
             display = dark
-        else:
+            Case = "reverse"
+        else:       # play blue tear video
             if Distance < 50:   # zoom in (1122, 891)
                 pts1, pts2 = zoomin(1122, 891, crop_i, crop_j)
                 M = cv2.getPerspectiveTransform(pts1, pts2)
@@ -270,3 +259,13 @@ def detect_main(sun_angle):
                 if crop_i < 3402 and crop_j < 2702:
                     crop_i += 243
                     crop_j += 193
+    elif Case == "reverse":
+        if sun_angle == 0:  # revserse to 0 degree, start again
+            #restrict = False
+            Case = "sunset"
+            end = False
+        else:       # waitin for revsering back
+            end = True
+            restrict = True
+    else:
+        pass
