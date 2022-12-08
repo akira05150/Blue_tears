@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Blue tears</title>
+  <link rel="stylesheet" href="../static/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <script src="../static/script.js"></script>
+</head>
+<body>
+    <div class="back">
+        <!--<img class="tears" src="../static/images/dark.jpg">-->
+        <img class="tears" id="bg" src="{{ url_for('video_feed') }}">
+        <img class="frame" src="../static/images/frame.png">
+        <div class="right_container">
+            <p class="description">
+                每年4-6月時馬祖島嶼海域，海面上會產生冷光面板一樣的藍光，也被稱為「藍眼淚」<br>
+                <br>
+                適合觀賞的地點，都是沒有光害，光線昏暗的海岸<br>
+                <br>
+                當在南面海邊或澳口吹起南風就會見到藍眼淚的蹤影<br>
+            </p>
+            <div id="reaction" class="reaction">
+                <img id="icon_compass" class="icons" src="../static/images/compass.png">
+                <img id="icon_anemoscope" class="icons" src="../static/images/anemoscope.png" onclick="change_wind('東南風')">
+                <p id="wind_direction" class="icons_text"> 南風 </p>
+                <!-- <img id="icon_thermometer" class="icons" src="../static/images/thermometer.png" onclick="change_temperature('20')">
+                <p id="temperature" class="icons_text"> 23&deg;C </p> -->
+            </div>
+            <div id="hint" class="hint">
+                <img class="hint_bulb" src="../static/images/hint2.png">
+                <p class="hint_text">
+                    打開手掌可以讓燈塔發光喔！
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
