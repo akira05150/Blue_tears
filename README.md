@@ -42,7 +42,7 @@
 ## How to use?
 - Scripts: 
 	- `app.py`: server
-	- `detect_main.py`: detect gesture and distance and display images/videos
+	- `detection.py`: detect gesture and distance and display images/videos
 	- `detect_gesture.py`: gesture recognition
 	- `distacne.py`: distance measurement
 - Usage: 
